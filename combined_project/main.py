@@ -5,6 +5,7 @@ import logging
 import sys
 import requests
 import itertools
+import json
 
 load_dotenv()
 
@@ -83,5 +84,16 @@ def fetch_employees(config, logger):
         raise APIError(f"Failed to fetch employees due to: {e}")
 
     return itertools.chain(page1_records, page2_records)
+
+def load_budgets(config, logger):
+    try:
+        with open(config.budget_file, "r") as f:
+            budgets = json.load(f)
+        logger.info(f"Successfully loaded budgets from {config.budget_file}")
+        return budgets
+    except FileNotFoundError:
+        raise PipelineError(f"Budget file not found at path: {config.budget_file}")
+    except json.decoder.JSONDecodeError as e:
+        raise PipelineError(f"Budget file is malformed : {e}")
 
 
