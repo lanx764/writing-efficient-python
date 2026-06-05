@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 import logging
 import sys
+import requests
+import itertools
 
 load_dotenv()
 
@@ -30,7 +32,7 @@ def validate_env(config):
     if missing_variables:
         raise EnvironmentError(f"Missing required environment variables: '{', '.join(missing_variables)}'")
 
-def get_logger(name):
+def get_logger(name,log_file):
     logger =logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
@@ -43,7 +45,7 @@ def get_logger(name):
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(formatter)
 
-    rotating_handler = RotatingFileHandler(filename="pipeline.log",maxBytes=1024,backupCount=3)
+    rotating_handler = RotatingFileHandler(filename=log_file,maxBytes=1024 * 1024,backupCount=3)
     rotating_handler.setLevel(logging.DEBUG)
     rotating_handler.setFormatter(formatter)
 
@@ -64,5 +66,22 @@ class ValidationError(PipelineError):
 
 class TransformError(PipelineError):
     pass
+
+def fetch_employees(config, logger):
+    try:
+        response1 = requests.get(config.api_url, headers={"x-api-key": config.api_key}, params={"page": 1})
+        response1.raise_for_status()
+        page1_records = response1.json()["data"]
+        logger.info(f"Page 1 returned {len(page1_records)} records")
+
+        response2 = requests.get(config.api_url, headers={"x-api-key": config.api_key}, params={"page": 2})
+        response2.raise_for_status()
+        page2_records = response2.json()["data"]
+        logger.info(f"Page 2 returned {len(page2_records)} records")
+
+    except requests.RequestException as e:
+        raise APIError(f"Failed to fetch employees due to: {e}")
+
+    return itertools.chain(page1_records, page2_records)
 
 
