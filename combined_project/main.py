@@ -1,9 +1,13 @@
-import requests
+from dotenv import load_dotenv
+import os
 
-response = requests.get(
-    "https://reqres.in/api/users",
-    params={"page": 1},
-    headers={"x-api-key": "your_key_here"}  # temporary hardcode just for this inspection step
-)
+load_dotenv()
 
-print(response.json())
+class PipelineConfig:
+    def __init__(self):
+        self.api_url = os.getenv("API_URL")
+        self.api_key = os.getenv("API_KEY")
+        self.budget_file = os.getenv("BUDGET_FILE")
+        self.output_file = os.getenv("OUTPUT_FILE")
+        self.log_file = os.getenv("LOG_FILE")
+        self.max_retries = os.getenv("MAX_RETRIES")
