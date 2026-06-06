@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 response = requests.get(
-    "https://reqres.in/api/users",
+    os.getenv("API_URL"),
     params={"page": 1},
     headers={"x-api-key": os.getenv("API_KEY")}
 )
