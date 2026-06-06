@@ -5,10 +5,12 @@ import logging
 import sys
 import requests
 import itertools
+import pstats
 import json
 import pandas as pd
 import numpy as np
 from datetime import date
+import cProfile
 
 load_dotenv()
 
@@ -163,6 +165,19 @@ def transform_records(enriched_records,logger):
 
     return df,summary_df
 
+def profile_transform(enriched_records,logger):
+    profiler = cProfile.Profile()
+    profiler.enable()
+
+    transformed = transform_records(enriched_records,logger)
+
+    profiler.disable()
+
+    stats = pstats.Stats(profiler)
+    stats.sort_stats("cumtime")
+    stats.print_stats(5)
+
+    return transformed
 
 
 
