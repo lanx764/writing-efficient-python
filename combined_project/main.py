@@ -117,6 +117,33 @@ def validate_records(all_records,logger):
 
     return valid_records
 
+def enrich_records(valid_records,budgets,logger):
+    budget_keys = set(budgets.keys())
+    department_names = list(budgets.keys())
+    cycled_departments = itertools.cycle(department_names)
+
+    enriched_records = []
+
+    for record in valid_records:
+        department = next(cycled_departments)
+
+        record["department"] = department
+
+        if department not in budget_keys:
+            logger.warning(f"{department} not found in {budget_keys}")
+            continue
+
+        record["budget"] = budgets[department]["budget"]
+        record["headcount_limit"] = budgets[department]["budgets"]
+
+        enriched_records.append(record)
+
+    return enriched_records
+
+
+
+
+
 
 
 
