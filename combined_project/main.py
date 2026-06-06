@@ -83,7 +83,8 @@ def fetch_employees(config, logger):
     except requests.RequestException as e:
         raise APIError(f"Failed to fetch employees due to: {e}")
 
-    return itertools.chain(page1_records, page2_records)
+    all_records = itertools.chain(page1_records, page2_records)
+    return all_records
 
 def load_budgets(config, logger):
     try:
@@ -95,5 +96,27 @@ def load_budgets(config, logger):
         raise PipelineError(f"Budget file not found at path: {config.budget_file}")
     except json.decoder.JSONDecodeError as e:
         raise PipelineError(f"Budget file is malformed : {e}")
+
+def validate_records(all_records,logger):
+    required_fields = {"id", "email", "first_name", "last_name"}
+
+    valid_records = []
+
+    for record in all_records:
+        missing_fields = required_fields.difference(record.keys())
+
+        if missing_fields:
+            logger.info(f"The record with id : {record["id"]} was rejected due to missing fields: {missing_fields}")
+            continue
+
+        if "@" not in record["email"]:
+            logger.info(f"The record with id : {record["id"]} was rejected due to invalid email which doesnt have '@': {record['email']}")
+            continue
+
+        valid_records.append(record)
+
+    return valid_records
+
+
 
 
