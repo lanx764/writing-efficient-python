@@ -240,6 +240,33 @@ if __name__ == "__main__":
 # the fetch employees function breaks first because the data has already 10x and to get 10x of the data through fetching from api
 # the code written in that function only fetched for 2 pages but for 10x it will need more than 2 pages
 
+#  SUMMARY OF THE PIPELINE
+# 1. What the pipeline does end to end?
+# this pipeline creates a pipeline config class that gets all the required env needed from the .env file and stores it as an attribute
+# then also validates the envs to check if any one is missing
+# creates a logger that logs relevant infos in the pipeline and stores it in a log file it also creates a stream handler and rotating handler
+# the stream handler is the one in charge of outputing the logs to the terminal
+# while the rotating file handler is the one in charge of handling the file size of the log and output to the log file and
+# the formatter is charge of how the log output is arranged and also uses propagate so the log messages wont be duplicated
+# and also uses logger.handler which checks if handlers has been attached to the logger already
+# then fetches 2 pages of the employees data needed and merged together
+# also loads the budgets file which includes all budgets and department data which will be assigned to each employee
+# then validates records meaning removing datas which have missing values and onlys using validated datas to continue th epupeline
+# then enrich records by assigning required datas in the budgets json file to each employee
+# then transform records by using the data we have from the employees to create new colums of some important infos
+# then ranks every function called in the transform records and onl show the top 5 which are slowest 5 functions that ran in transform records
+# then saves the final dataframe to the given csc
+#
+# 2. The decisions i made and why?
+# One of the decisions i made was to summarise the dataframe by checking the salary mean and total counts of each department
+# so as to see the department that pays well on average and check the number of employees in each department
+#
+# 3. What i would change if the data volume was 100x larger?
+# if the data volume was 100x larger i will change the fetch_employee function by rewriting the code
+# in order for the fetch to be fetching automatically until the required number it needs
+# unlike this particular function i wrote if the data was 10x the pipeline would fail
+# but  i will re write the function so it will be able to be comfortable with any amount of times it is to go and fetch data from the api
+# unlike the previous function that as only be customed to run just twice
 
 
 
