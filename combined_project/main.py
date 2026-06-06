@@ -111,11 +111,11 @@ def validate_records(all_records,logger):
         missing_fields = required_fields.difference(record.keys())
 
         if missing_fields:
-            logger.info(f"The record with id : {record["id"]} was rejected due to missing fields: {missing_fields}")
+            logger.warning(f"The record with id : {record["id"]} was rejected due to missing fields: {missing_fields}")
             continue
 
         if "@" not in record["email"]:
-            logger.info(f"The record with id : {record["id"]} was rejected due to invalid email which doesnt have '@': {record['email']}")
+            logger.warning(f"The record with id : {record["id"]} was rejected due to invalid email which doesnt have '@': {record['email']}")
             continue
 
         valid_records.append(record)
@@ -139,7 +139,7 @@ def enrich_records(valid_records,budgets,logger):
             continue
 
         record["budget"] = budgets[department]["budget"]
-        record["headcount_limit"] = budgets[department]["budgets"]
+        record["headcount_limit"] = budgets[department]["headcount_limit"]
 
         enriched_records.append(record)
 
@@ -150,7 +150,7 @@ def transform_records(enriched_records,logger):
     before = len(df)
 
     df["full_name"] = df["first_name"] + " " + df["last_name"]
-    df["email_domain"] = df["email"].str.split("@")[1]
+    df["email_domain"] = df["email"].str.split("@").str[1]
     df["salary"] = (df["budget"] / df["headcount_limit"]).round(2)
     df["salary_band"] = np.where(df["salary"] > 50000, "senior", "junior")
     df["ingestion_date"] = date.today().strftime("%Y-%m-%d")
@@ -184,7 +184,7 @@ def save_report(df,config,logger):
     try:
         df.to_csv(config.output_file,index=False)
         df_rows = len(df)
-        logger.info(f"{df_rows} were written to {config.output_file}")
+        logger.info(f"{df_rows} rows were written to {config.output_file}")
     except OSError as e:
         raise PipelineError(f"Writing of the dataframe to {config.output_file} failed: {e}")
 
@@ -220,7 +220,10 @@ def run_pipeline():
 
     except PipelineError as e:
         logger.exception(f"Pipeline failed: {e}")
-        raise None
+        raise
+
+if __name__ == "__main__":
+    run_pipeline()
 
 
 
