@@ -226,6 +226,21 @@ if __name__ == "__main__":
     run_pipeline()
 
 
+# PERFORMANCE THINKING
+
+# 1. Which operation in transform_records would be most expensive at 1 million rows and why?
+# the operation in the transform records that would be the most expensive would be the groupby because
+# pandas will have to scan all 1 million rows for example it wants to group a certain string it will have to check
+# all the rows till it gets to the 1000000 row before it stops the groupby operation then after it applies the count and mean operator also.
+
+# 2. Why is converting the budgets dict keys to a set outside the loop better than inside?
+# it is better because the set would be created once reducing the cost so instead of paying simultaneously you pay only once
+
+# 3. What would break first in this pipeline at 10x the data volume?
+# the fetch employees function breaks first because the data has already 10x and to get 10x of the data through fetching from api
+# the code written in that function only fetched for 2 pages but for 10x it will need more than 2 pages
+
+
 
 
 
