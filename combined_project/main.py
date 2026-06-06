@@ -6,6 +6,9 @@ import sys
 import requests
 import itertools
 import json
+import pandas as pd
+import numpy as np
+from datetime import date
 
 load_dotenv()
 
@@ -139,6 +142,27 @@ def enrich_records(valid_records,budgets,logger):
         enriched_records.append(record)
 
     return enriched_records
+
+def transform_records(enriched_records,logger):
+    df = pd.DataFrame(enriched_records)
+    before = len(df)
+
+    df["full_name"] = df["first_name"] + " " + df["last_name"]
+    df["email_domain"] = df["email"].split("@")[1]
+    df["salary"] = (df["budget"] / df["headcount_limit"]).round(2)
+    df["salary_band"] = np.where(df["salary"] > 50000, "senior", "junior")
+    df["ingestion_date"] = date.today().strftime("%Y-%m-%d")
+
+    after = len(df)
+
+    summary_df = df.groupby(["department","salary_band"]).agg(
+        employee_count=("full_name","count"),
+        average_salary=("salary","mean")).reset_index()
+
+    logger.info(f"{before} records were entered and the final dataframe consists of {after}")
+
+    return df,summary_df
+
 
 
 
