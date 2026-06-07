@@ -1,6 +1,7 @@
 # Writing Efficient Python Code
 
-A structured learning project covering how to write efficient, production-grade Python code for data engineering pipelines.
+A structured learning project covering how to write efficient, production-grade 
+Python code for data engineering pipelines.
 
 ---
 
@@ -28,46 +29,7 @@ A structured learning project covering how to write efficient, production-grade 
 
 ---
 
-## Project — HR Analytics ETL Pipeline
+## Combined Project
 
-A multi-stage HR analytics pipeline that fetches employee data from the ReqRes API, enriches it with department budget data, validates and cleans records, applies vectorised transformations, profiles the transform stage, and writes the final report to CSV.
-
-**Topics integrated:** Core Python, File Handling, Pandas, Datetime, JSON, Functions and Pipelines, ETL/ELT Concepts, Data Formats, Reshaping, APIs, Error Handling, OOP, Environment Variables, Logging, Writing Efficient Python
-
-**Efficiency techniques demonstrated:**
-- `itertools.chain` for lazy combination of API pages
-- Set lookup for O(1) field validation
-- `itertools.cycle` for department assignment
-- Fully vectorised Pandas transformations — no `.apply()`, no loops
-- `np.where` for conditional column assignment
-- `cProfile` and `pstats` for transform stage profiling
-
----
-
-## How to Run the Project
-
-**Prerequisites:**
-- Python 3.10+
-- Install dependencies: `pip install pandas numpy requests python-dotenv memory-profiler`
-
-**Setup:**
-1. Navigate to the `hr_analytics_etl_pipeline` folder
-2. Create a `.env` file using `.env.example` as a template
-3. Add your ReqRes API key to the `.env` file
-
-**Run:**
-```bash
-python main.py
-```
-
-**Output:**
-- `employee_report.csv` — final transformed employee data
-- `pipeline.log` — full pipeline log with rotating file handler
-
----
-
-## Notes
-
-- `.env` is excluded from version control via `.gitignore` — never commit API keys
-- `*.csv` output files are excluded from version control
-- All configuration lives in `PipelineConfig` — no hardcoded values anywhere in the pipeline
+The combined project for this topic has its own dedicated repository:
+[HR Analytics ETL Pipeline](https://github.com/lanx764/hr-analytics-etl-pipeline)
