@@ -1,6 +1,0 @@
-{
-    "engineering": {"budget": 500000, "headcount_limit": 10},
-    "marketing": {"budget": 300000, "headcount_limit": 6},
-    "hr": {"budget": 150000, "headcount_limit": 4},
-    "support": {"budget": 200000, "headcount_limit": 8}
-}
